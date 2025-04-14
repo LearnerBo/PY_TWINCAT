@@ -8,19 +8,23 @@ import time
 import configparser
 from AutoTK import *
 from PyQt6.QtCore import QTimer
+from Testcase import *
+import numpy
 # AMS_ID = "192.168.1.2.1.1"
 # IP_ADRESS = "127.0.0.1"
 # PORT = 851
-CH1_E = "MAIN.Enable1"
-CH2_E = "MAIN.Enable2"
-CH3_E = "MAIN.Enable3"
-CH1_P = "MAIN.Polarity1"
-CH2_P = "MAIN.Polarity2"
-CH3_P = "MAIN.Polarity3"
-CH1_V = "MAIN.Voltage1"
-CH2_V = "MAIN.Voltage2"
-CH3_V = "MAIN.Voltage3"
+CH_E = ["MAIN.Enable1","MAIN.Enable2","MAIN.Enable3"]
+CH_P = ["MAIN.Polarity1","MAIN.Polarity2","MAIN.Polarity3"]
+CH_V = ["MAIN.Voltage1","MAIN.Voltage2","MAIN.Voltage3"]
+CH_C = ["MAIN.CurrentLimiting1","MAIN.CurrentLimiting2", "MAIN.CurrentLimiting3"]
+Working_Mode = "MAIN.Working_Mode"
+STATE = "MAIN.STATE"
+TimeCH = ["MAIN.TimerCH[1]","MAIN.TimerCH[2]","MAIN.TimerCH[3]"]
+ActiveCH = ["MAIN.ActiveCH[1]","MAIN.ActiveCH[2]","MAIN.ActiveCH[3]"]
+Interval = ["MAIN.IntervalCH[1]","MAIN.IntervalCH[2]","MAIN.IntervalCH[3]"]
+SetBool = ["MAIN.SetBool[1]","MAIN.SetBool[2]","MAIN.SetBool[3]"]
 Config_file = "config.ini"
+
 class UI_Twincat_Controller(QtWidgets.QMainWindow,Ui_Twincat_UI):
     def __init__(self,parent = None):
         super(UI_Twincat_Controller, self).__init__(parent)
@@ -34,128 +38,224 @@ class UI_Twincat_Controller(QtWidgets.QMainWindow,Ui_Twincat_UI):
         self.setupconnect()
         self.plc = pyads.Connection(self.ams_net_id,self.port,self.port)
         self.plc.open()
+        self.plc.write_by_name(STATE,2)
+        
 
         self.interval_ms = [0] * 3
         self.step_volt = [0] * 3
         self.dir = [-1] * 3
         self.volt = [0] * 3
+        self.CurrentLimit = [10]* 3
+        self.Test_cnt = [0]*2
+        self.timers = [QTimer(self) for _ in range(3)]
+        for i, timer in enumerate(self.timers):
+            timer.timeout.connect(lambda i=i: self.on_timer_timeout(i))
+        #page1
+        self.CH_Active = np.full((2, 3), False, dtype=bool) 
+        self.CH_Charge_V = np.full((2,3),0,int)
+        self.CH_Interval = np.full((2,3),0,int)
+        self.NAME_1_List=[]
+        self.Enable_1_List=[]
+        self.NAME_2_List = []
+        self.Enable_2_List=[]
+        for i in range(3):
+            self.NAME_1_List.append(CH_E[i])
+            self.Enable_1_List.append(False)
+            self.NAME_2_List.append(CH_P[i])
+            self.Enable_2_List.append(False)
+
+
+        self.Polarity_2_List=[]
+
 
     def precise_sleep(self,seconds):
         start = time.perf_counter()
         while time.perf_counter() - start < seconds/1000:
             pass
 
+    def qt_sleep(self, seconds, channel):
+        self.timers[channel].start(seconds/1000)
+
+    def on_timer_timeout(self, channel):
+        self.timers[channel].stop()
+        self.volt[channel] = self.volt[channel] + self.dir[channel] * self.step_volt[channel]
+        self.volt[channel] = 0 if self.volt[channel] < 0 else self.volt[channel]
+        self.plc.write_by_name(CH_V[channel], self.volt[channel])
+        getattr(self, f'LE_Volt_{channel+1}').setText(str(self.volt[channel]))
+
 
     def setupconnect(self):
-        self.PB_Enable_1.clicked.connect(self.slot_PB_Enable_1_clicked)
-        self.PB_Enable_2.clicked.connect(self.slot_PB_Enable_2_clicked)
-        self.PB_Enable_3.clicked.connect(self.slot_PB_Enable_3_clicked)
-        self.PB_Polarity_1.clicked.connect(self.slot_PB_Polarity_1_clicked)
-        self.PB_Polarity_2.clicked.connect(self.slot_PB_Polarity_2_clicked)
-        self.PB_Polarity_3.clicked.connect(self.slot_PB_Polarity_3_clicked)
-        self.LE_Volt_1.returnPressed.connect(self.slot_LE_Volt_1_returnPressed)
-        self.LE_Volt_2.returnPressed.connect(self.slot_LE_Volt_2_returnPressed)
-        self.LE_Volt_3.returnPressed.connect(self.slot_LE_Volt_3_returnPressed)
-        self.LE_SV_1.returnPressed.connect(self.slot_LE_SV_1_returnPressed)
-        self.LE_SV_2.returnPressed.connect(self.slot_LE_SV_2_returnPressed)
-        self.LE_SV_3.returnPressed.connect(self.slot_LE_SV_3_returnPressed)
-        self.LE_IM_1.returnPressed.connect(self.slot_LE_LE_IM_1_returnPressed)
-        self.LE_IM_2.returnPressed.connect(self.slot_LE_LE_IM_2_returnPressed)
-        self.LE_IM_3.returnPressed.connect(self.slot_LE_LE_IM_3_returnPressed)
-        self.PB_Dir_1.clicked.connect(self.slot_PB_Dir_1_clicked)
-        self.PB_Dir_2.clicked.connect(self.slot_PB_Dir_2_clicked)
-        self.PB_Dir_3.clicked.connect(self.slot_PB_Dir_3_clicked)
-    
+        #page0
+        for i in range(3):
+            getattr(self, f'PB_Enable_{i+1}').clicked.connect(lambda checked, i=i: self.slot_PB_Enable_clicked(checked, i))
+            getattr(self, f'PB_Polarity_{i+1}').clicked.connect(lambda checked, i=i: self.slot_PB_Polarity_clicked(checked, i))
+            getattr(self, f'PB_Dir_{i+1}').clicked.connect(lambda checked, i=i: self.slot_PB_Dir_clicked(checked, i))
+            getattr(self,f'PB_VoltChange_{i+1}').clicked.connect(lambda  checked,i=i: self.slot_PB_VoltChange_clicked(checked,i))
+            getattr(self, f'LE_Volt_{i+1}').returnPressed.connect(lambda i=i: self.slot_LE_Volt_returnPressed(i))
+            getattr(self, f'LE_IM_{i+1}').returnPressed.connect(lambda i=i: self.slot_LE_IM_returnPressed(i))
+            getattr(self, f'LE_SV_{i+1}').returnPressed.connect(lambda i=i: self.slot_LE_SV_returnPressed(i))
+            getattr(self, f'LE_LC_{i+1}').returnPressed.connect(lambda i=i:self.slot_LE_LC_returnPressed(i))
+        self.PB_Testcase.clicked.connect(self.slot_PB_Testcase_clicked)
+        #page1
+        self.PB_Exit.clicked.connect(self.slot_PB_Exit_clicked)
+        for i in range(2):
+            getattr(self,f'PB_Start_{i+1}').clicked.connect(lambda checked,i=i:self.slot_PB_Start_clicked(checked,i))
+            getattr(self,f'PB_Syn_{i+1}').clicked.connect(lambda checked,i=i:self.slot_PB_Sync_clicked(checked,i))
 
+            for j in range(3):
+                getattr(self,f'PB_CH{j+1}_A_{i+1}').clicked.connect(lambda checked,i=i,j=j:self.slot_PB_A_clicked(checked,i,j))
+                getattr(self,f'LE_CH{j+1}_CV_{i+1}').returnPressed.connect(lambda i=i,j=j:self.slot_LE_CH_CV_returnPressed(i,j))
+                getattr(self,f'LE_CH{j+1}_I_{i+1}').returnPressed.connect(lambda i=i,j=j:self.slot_LE_CH_I_returnPressed(i,j))
 
-    def slot_PB_Enable_1_clicked(self,checked):
-        if checked:
-            self.plc.write_by_name(CH1_E,True)
-        else :
-            self.plc.write_by_name(CH1_E,False)
-    def slot_PB_Enable_2_clicked(self,checked):
-        if checked:
-            self.plc.write_by_name(CH2_E,True)
-        else :
-            self.plc.write_by_name(CH2_E,False)
-    def slot_PB_Enable_3_clicked(self,checked):
-        if checked:
-            self.plc.write_by_name(CH3_E,True)
-        else :
-            self.plc.write_by_name(CH3_E,False)
+                # PB_CH1_A_1
+#page0
+    def slot_PB_Enable_clicked(self,checked,channel_index):
+        ch_e =CH_E[channel_index]
+        self.plc.write_by_name(ch_e,checked)
         
-    def slot_PB_Polarity_1_clicked(self,checked):
-        if checked:
-            self.plc.write_by_name(CH1_P,True)
-        else :
-            self.plc.write_by_name(CH1_P,False)
-        self.precise_sleep(self.interval_ms[0])
-        self.volt[0] = self.volt[0] +self.dir[0]*self.step_volt[0]
-        self.volt[0] = 0 if self.volt[0]<0 else self.volt[0]
-        self.volt[0] = 6000 if self.volt[0]>6000 else self.volt[0]
-        self.plc.write_by_name(CH1_V,self.volt[0])
-        self.LE_Volt_1.setText(str(self.volt[0]))
+
+    def slot_PB_Polarity_clicked(self,checked,channel_index):
+        ch_p = CH_P[channel_index]
+        ch_v = CH_V[channel_index]
+        self.plc.write_by_name(ch_p,checked)
+        self.precise_sleep(self.interval_ms[channel_index])
+        self.volt[channel_index] = self.volt[channel_index] + self.dir[channel_index] * self.step_volt[channel_index]
+        self.volt[channel_index] = min(max(self.volt[channel_index], 0), 6000)
+        self.plc.write_by_name(ch_v,self.volt[channel_index])
+        getattr(self,f'LE_Volt_{channel_index+1}').setText(str(self.volt[channel_index]))
+
+
+    def slot_PB_Dir_clicked(self,checked,channel_index):
+        self.dir[channel_index] = 1 if checked else -1
+        # self.thread_1 = Testcase_1(self)
+        # self.thread_1.start()
+
+    def slot_PB_VoltChange_clicked(self,checked,channel_index):
+        self.volt[channel_index] = self.volt[channel_index] + self.dir[channel_index] * self.step_volt[channel_index]
+        self.volt[channel_index] = min(max(self.volt[channel_index], 0), 6000)
+        self.plc.write_by_name(CH_V[channel_index],self.volt[channel_index])
+        getattr(self,f'LE_Volt_{channel_index+1}').setText(str(self.volt[channel_index]))
+
+
+    def slot_LE_LC_returnPressed(self,channel_index):
+        ch_c = CH_C[channel_index]
+        self.CurrentLimit[channel_index]= getattr(self,f'LE_LC_{channel_index+1}').text()
+        self.CurrentLimit[channel_index] = int(self.CurrentLimit[channel_index])
+        self.plc.write_by_name(ch_c,self.CurrentLimit[channel_index])
         
-    def slot_PB_Polarity_2_clicked(self,checked):
-        if checked:
-            self.plc.write_by_name(CH2_P,True)
-        else :
-            self.plc.write_by_name(CH2_P,False)
-        self.precise_sleep(self.interval_ms[1])
-        self.volt[1] = self.volt[1] +self.dir[1]*self.step_volt[1]
-        self.volt[1] = 0 if self.volt[1]<0 else self.volt[1]
-        self.volt[1] = 6000 if self.volt[1]>6000 else self.volt[1]
-        self.plc.write_by_name(CH2_V,self.volt[1])    
-        self.LE_Volt_2.setText(str(self.volt[1]))
 
-    def slot_PB_Polarity_3_clicked(self,checked):
-        if checked:
-            self.plc.write_by_name(CH3_P,True)
-        else :
-            self.plc.write_by_name(CH3_P,False)
-        self.precise_sleep(self.interval_ms[2])
-        self.volt[2] = self.volt[2] +self.dir[2]*self.step_volt[2]
-        self.volt[2] = 0 if self.volt[2]<0 else self.volt[2]
-        self.volt[2] = 6000 if self.volt[2]>6000 else self.volt[2]
-        self.plc.write_by_name(CH3_V,self.volt[2])
-        self.LE_Volt_3.setText(str(self.volt[2]))
+    def slot_LE_Volt_returnPressed(self,channel_index):
+        ch_v = CH_V[channel_index]
+        self.volt[channel_index] = getattr(self,f'LE_Volt_{channel_index+1}').text()
+        self.volt[channel_index] = int(self.volt[channel_index])
+        self.volt[channel_index] = min(max(0,self.volt[channel_index]),6000)
+        self.plc.write_by_name(ch_v,self.volt[channel_index])
+        getattr(self,f'LE_Volt_{channel_index+1}').setText(str(self.volt[channel_index]))
 
-    def slot_LE_Volt_1_returnPressed(self):
-        self.volt[0] = self.LE_Volt_1.text()
-        self.volt[0] = int(self.volt[0])
-        self.plc.write_by_name(CH1_V,self.volt[0])
-    def slot_LE_Volt_2_returnPressed(self):
-        self.volt[1] = self.LE_Volt_2.text()
-        self.volt[1] = int(self.volt[1])
-        self.plc.write_by_name(CH2_V,self.volt[1])
-    def slot_LE_Volt_3_returnPressed(self):
-        self.volt[2] = self.LE_Volt_3.text()
-        self.volt[2] = int(self.volt[2])
-        self.plc.write_by_name(CH3_V,self.volt[2])
-    def slot_LE_SV_1_returnPressed(self):
-        self.step_volt[0] = self.LE_SV_1.text()
-        self.step_volt[0] = int(self.step_volt[0])
-    def slot_LE_SV_2_returnPressed(self):
-        self.step_volt[1] = self.LE_SV_2.text()
-        self.step_volt[1] = int(self.step_volt[1])
-    def slot_LE_SV_3_returnPressed(self):
-        self.step_volt[2] = self.LE_SV_3.text()
-        self.step_volt[2] = int(self.step_volt[2])
-    def slot_LE_LE_IM_1_returnPressed(self):
-        self.interval_ms[0] = self.LE_IM_1.text()
-        self.interval_ms[0] = int(self.interval_ms[0])
-    def slot_LE_LE_IM_2_returnPressed(self):
-        self.interval_ms[1] = self.LE_IM_2.text()
-        self.interval_ms[1] = int(self.interval_ms[1])
-    def slot_LE_LE_IM_3_returnPressed(self):
-        self.interval_ms[2] = self.LE_IM_3.text()
-        self.interval_ms[2] = int(self.interval_ms[2])
-    def slot_PB_Dir_1_clicked(self,checked):
-        self.dir[0] = 1 if checked else -1
-    def slot_PB_Dir_2_clicked(self,checked):
-        self.dir[1] = 1 if checked else -1
-    def slot_PB_Dir_3_clicked(self,checked):
-        self.dir[2] = 1 if checked else -1
+
+
+    def slot_LE_IM_returnPressed(self,channel_index):
+        self.interval_ms[channel_index] = getattr(self,f'LE_IM_{channel_index+1}').text()
+        self.interval_ms[channel_index] = int(self.interval_ms[channel_index])
+
+
+    def slot_LE_SV_returnPressed(self,channel_index):
+        self.step_volt[channel_index] = getattr(self,f'LE_SV_{channel_index+1}').text()
+        self.step_volt[channel_index] = int(self.step_volt[channel_index])
+        
+    def slot_PB_Testcase_clicked(self):
+        self.stackedWidget.setCurrentIndex(1)  
+        self.plc.write_by_name(Working_Mode,0)
+
+
+
+#page1 
+    def slot_PB_Exit_clicked(self,checked):
+        self.stackedWidget.setCurrentIndex(0)
+        self.plc.write_by_name(STATE,2)
+        self.plc.write_by_name(Working_Mode,0)
+
+
+    def slot_PB_A_clicked(self,checked,test_index,channel_index):
+        self.CH_Active[test_index][channel_index] = checked
+        print(test_index,channel_index, self.CH_Active[test_index][channel_index])
+        if CH_E[channel_index] in getattr(self,f'NAME_{test_index+1}_List'):
+            index = getattr(self,f'NAME_{test_index+1}_List').index(CH_E[channel_index])
+            getattr(self,f'Enable_{test_index+1}_List')[channel_index] = checked
+        else:
+            getattr(self,f'Enable_{test_index+1}_List').append(checked)
+            getattr(self,f'NAME_{test_index+1}_List').append(CH_E[channel_index])
+        print(getattr(self,f'NAME_{test_index+1}_List'),getattr(self,f'Enable_{test_index+1}_List'))
+        self.plc.write_by_name(ActiveCH[channel_index],checked)
+        self.PB_Syn_1.setChecked(False)
+        self.PB_Syn_2.setChecked(False)
+
+
+
+    def slot_LE_CH_CV_returnPressed(self,test_index,channel_index):
+        self.CH_Charge_V[test_index][channel_index] =  getattr(self,f'LE_CH{channel_index+1}_CV_{test_index+1}').text()
+        self.CH_Charge_V[test_index][channel_index] = int(self.CH_Charge_V[test_index][channel_index])
+        print(test_index,channel_index,self.CH_Charge_V[test_index][channel_index])    
+        ch_v = CH_V[channel_index]
+        self.plc.write_by_name(ch_v,self.CH_Charge_V[test_index][channel_index])
+        self.PB_Syn_1.setChecked(False)
+        self.PB_Syn_2.setChecked(False)
+
+
+    def slot_LE_CH_I_returnPressed(self,test_index,channel_index):
+        self.CH_Interval[test_index][channel_index] = getattr(self,f'LE_CH{channel_index+1}_I_{test_index+1}').text()
+        self.CH_Interval[test_index][channel_index] = int(self.CH_Interval[test_index][channel_index])
+        self.CH_Interval[test_index][channel_index] =self.CH_Interval[test_index][channel_index]/10
+        print(test_index,channel_index,self.CH_Interval[test_index][channel_index])
+        self.plc.write_by_name(Interval[channel_index],self.CH_Interval[test_index][channel_index])
+        self.PB_Syn_1.setChecked(False)
+        self.PB_Syn_2.setChecked(False)
+
+    def slot_PB_Start_clicked(self,checked,test_index):
+        if checked:
+            if(test_index == 0):
+                self.plc.write_by_name(Working_Mode,1)
+                self.plc.write_by_name(STATE,3)
+                self.PB_Start_2.setChecked(False)
+                
+                # self.PB_Start_2.setChecked(False)
+                # self.Thread_1 = Testcase_1(self)
+                # self.Thread_1.plc_write_by_name_signal.connect(self.plc.write_by_name)
+                # self.Thread_1.start()
+            elif (test_index == 1):
+                self.plc.write_by_name(STATE,3)
+                self.plc.write_by_name(Working_Mode,2)
+                self.PB_Start_1.setChecked(False)
+
+                # self.PB_Start_1.setChecked(False)
+                # self.thread_2 = Testcase_2(self)
+                # self.Thread_1.plc_write_by_name_signal.connect(self.plc.write_by_name)
+                # self.thread_2.start()
+        else :
+            self.plc.write_by_name(STATE,2)
+            self.plc.write_by_name(Working_Mode,0)
+            for i in range(3):
+                self.plc.write_by_name(TimeCH[i],0)
+                self.plc.write_by_name(CH_E[i],False)
+                self.plc.write_by_name(SetBool[i],False)
+
+
+    def slot_PB_Sync_clicked(self,checked,test_index):
+        self.PB_Syn_1.setChecked(checked)
+        self.PB_Syn_2.setChecked(checked)
+        if(checked):
+           
+            self.CH_Interval[0][1] = self.CH_Interval[0][2] = self.CH_Interval[0][0]
+            self.CH_Charge_V[0][1] = self.CH_Charge_V[0][2] = self.CH_Charge_V[0][0]
+            self.CH_Active[0][1] = self.CH_Active[0][2] = self.CH_Active[0][0] 
+            for _ in range(3):
+                self.plc.write_by_name(Interval[_],self.CH_Interval[0][_])
+                self.plc.write_by_name(CH_V[_],self.CH_Charge_V[0][_])
+                self.plc.write_by_name(SetBool[_],self.CH_Charge_V[0][_])
+                self.plc.write_by_name(ActiveCH[_],self.CH_Active[0][_])
+                getattr(self,f'PB_CH{_+1}_A_1').setChecked(self.CH_Active[0][_])
+                getattr(self,f'LE_CH{_+1}_CV_1').setText(str(self.CH_Charge_V[0][_]))
+                getattr(self,f'LE_CH{_+1}_I_1').setText(str(self.CH_Interval[0][_]*10))
 
 
 
