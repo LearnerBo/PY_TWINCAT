@@ -21,7 +21,9 @@ Working_Mode = "MAIN.Working_Mode"
 STATE = "MAIN.STATE"
 TimeCH = ["MAIN.TimerCH[1]","MAIN.TimerCH[2]","MAIN.TimerCH[3]"]
 ActiveCH = ["MAIN.ActiveCH[1]","MAIN.ActiveCH[2]","MAIN.ActiveCH[3]"]
-Interval = ["MAIN.IntervalCH[1]","MAIN.IntervalCH[2]","MAIN.IntervalCH[3]"]
+ONCH = ["MAIN.IntervalON_CH[1]","MAIN.IntervalON_CH[2]","MAIN.IntervalON_CH[3]"]
+OFFCH = ["MAIN.IntervalOFF_CH[1]","MAIN.IntervalOFF_CH[2]","MAIN.IntervalOFF_CH[3]"]
+
 SetBool = ["MAIN.SetBool[1]","MAIN.SetBool[2]","MAIN.SetBool[3]"]
 Config_file = "config.ini"
 
@@ -53,7 +55,10 @@ class UI_Twincat_Controller(QtWidgets.QMainWindow,Ui_Twincat_UI):
         #page1
         self.CH_Active = np.full((2, 3), False, dtype=bool) 
         self.CH_Charge_V = np.full((2,3),0,int)
-        self.CH_Interval = np.full((2,3),0,int)
+        # self.CH_Interval = np.full((2,3),0,int)
+        self.CH_ON = np.full((1,3),0,int)
+        self.CH_OFF = np.full((1,3),0,int)
+
         self.NAME_1_List=[]
         self.Enable_1_List=[]
         self.NAME_2_List = []
@@ -105,7 +110,9 @@ class UI_Twincat_Controller(QtWidgets.QMainWindow,Ui_Twincat_UI):
             for j in range(3):
                 getattr(self,f'PB_CH{j+1}_A_{i+1}').clicked.connect(lambda checked,i=i,j=j:self.slot_PB_A_clicked(checked,i,j))
                 getattr(self,f'LE_CH{j+1}_CV_{i+1}').returnPressed.connect(lambda i=i,j=j:self.slot_LE_CH_CV_returnPressed(i,j))
-                getattr(self,f'LE_CH{j+1}_I_{i+1}').returnPressed.connect(lambda i=i,j=j:self.slot_LE_CH_I_returnPressed(i,j))
+        for z in range(3):
+            getattr(self,f'LE_CH{z+1}_ON_{1}').returnPressed.connect(lambda i=z:self.slot_LE_CH_ON_returnPressed(i))
+            getattr(self,f'LE_CH{z+1}_OFF_{1}').returnPressed.connect(lambda i=z:self.slot_LE_CH_OFF_returnPressed(i))
 
                 # PB_CH1_A_1
 #page0
@@ -202,12 +209,21 @@ class UI_Twincat_Controller(QtWidgets.QMainWindow,Ui_Twincat_UI):
         self.PB_Syn_2.setChecked(False)
 
 
-    def slot_LE_CH_I_returnPressed(self,test_index,channel_index):
-        self.CH_Interval[test_index][channel_index] = getattr(self,f'LE_CH{channel_index+1}_I_{test_index+1}').text()
-        self.CH_Interval[test_index][channel_index] = int(self.CH_Interval[test_index][channel_index])
-        self.CH_Interval[test_index][channel_index] =self.CH_Interval[test_index][channel_index]/10
-        print(test_index,channel_index,self.CH_Interval[test_index][channel_index])
-        self.plc.write_by_name(Interval[channel_index],self.CH_Interval[test_index][channel_index])
+    def slot_LE_CH_ON_returnPressed(self,test_index,channel_index):
+        self.CH_ON[test_index][channel_index] = getattr(self,f'LE_CH{channel_index+1}_ON_{test_index+1}').text()
+        self.CH_ON[test_index][channel_index] = int(self.CH_ON[test_index][channel_index])
+        self.CH_ON[test_index][channel_index] =self.CH_ON[test_index][channel_index]/10
+        print(test_index,channel_index,self.CH_ON[test_index][channel_index])
+        self.plc.write_by_name(ONCH[channel_index],self.CH_ON[test_index][channel_index])
+        self.PB_Syn_1.setChecked(False)
+        self.PB_Syn_2.setChecked(False)
+    
+    def slot_LE_CH_OFF_returnPressed(self,test_index,channel_index):
+        self.CH_OFF[test_index][channel_index] = getattr(self,f'LE_CH{channel_index+1}_OFF_{test_index+1}').text()
+        self.CH_OFF[test_index][channel_index] = int(self.CH_OFF[test_index][channel_index])
+        self.CH_OFF[test_index][channel_index] =self.CH_OFF[test_index][channel_index]/10
+        print(test_index,channel_index,self.CH_OFF[test_index][channel_index])
+        self.plc.write_by_name(OFFCH[channel_index],self.CH_OFF[test_index][channel_index])
         self.PB_Syn_1.setChecked(False)
         self.PB_Syn_2.setChecked(False)
 
@@ -244,18 +260,20 @@ class UI_Twincat_Controller(QtWidgets.QMainWindow,Ui_Twincat_UI):
         self.PB_Syn_1.setChecked(checked)
         self.PB_Syn_2.setChecked(checked)
         if(checked):
-           
-            self.CH_Interval[0][1] = self.CH_Interval[0][2] = self.CH_Interval[0][0]
+            self.CH_ON[0][1] = self.CH_ON[0][2] = self.CH_ON[0][0]
+            self.CH_OFF[0][1] = self.CH_OFF[0][2] = self.CH_OFF[0][0]
             self.CH_Charge_V[0][1] = self.CH_Charge_V[0][2] = self.CH_Charge_V[0][0]
             self.CH_Active[0][1] = self.CH_Active[0][2] = self.CH_Active[0][0] 
             for _ in range(3):
-                self.plc.write_by_name(Interval[_],self.CH_Interval[0][_])
+                self.plc.write_by_name(ONCH[_],self.CH_ON[0][_])
+                self.plc.write_by_name(OFFCH[_],self.CH_OFF[0][_])
                 self.plc.write_by_name(CH_V[_],self.CH_Charge_V[0][_])
                 self.plc.write_by_name(SetBool[_],self.CH_Charge_V[0][_])
                 self.plc.write_by_name(ActiveCH[_],self.CH_Active[0][_])
                 getattr(self,f'PB_CH{_+1}_A_1').setChecked(self.CH_Active[0][_])
                 getattr(self,f'LE_CH{_+1}_CV_1').setText(str(self.CH_Charge_V[0][_]))
-                getattr(self,f'LE_CH{_+1}_I_1').setText(str(self.CH_Interval[0][_]*10))
+                getattr(self,f'LE_CH{_+1}_ON_1').setText(str(self.CH_ON[0][_]*10))
+                getattr(self,f'LE_CH{_+1}_OFF_1').setText(str(self.CH_OFF[0][_]*10))
 
 
 

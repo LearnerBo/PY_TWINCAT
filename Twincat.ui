@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>966</width>
-    <height>828</height>
+    <width>1120</width>
+    <height>792</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <rect>
       <x>-30</x>
       <y>0</y>
-      <width>991</width>
+      <width>1141</width>
       <height>861</height>
      </rect>
     </property>
@@ -83,8 +83,8 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-        <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+        <normaloff>UI_PIC/OFF.jpg</normaloff>
+        <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -128,8 +128,8 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-        <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+        <normaloff>UI_PIC/OFF.jpg</normaloff>
+        <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -155,8 +155,8 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-        <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+        <normaloff>UI_PIC/OFF.jpg</normaloff>
+        <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -224,8 +224,8 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-        <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+        <normaloff>UI_PIC/OFF.jpg</normaloff>
+        <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -287,8 +287,8 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-        <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+        <normaloff>UI_PIC/OFF.jpg</normaloff>
+        <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -314,8 +314,8 @@
       </property>
       <property name="icon">
        <iconset>
-        <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-        <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+        <normaloff>UI_PIC/OFF.jpg</normaloff>
+        <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -846,19 +846,6 @@
      </widget>
     </widget>
     <widget class="QWidget" name="page1">
-     <widget class="QPushButton" name="PB_Exit">
-      <property name="geometry">
-       <rect>
-        <x>890</x>
-        <y>0</y>
-        <width>101</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>退出测试模式</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_2">
       <property name="geometry">
        <rect>
@@ -885,7 +872,7 @@
        <rect>
         <x>40</x>
         <y>50</y>
-        <width>851</width>
+        <width>1061</width>
         <height>291</height>
        </rect>
       </property>
@@ -935,8 +922,8 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-         <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+         <normaloff>UI_PIC/OFF.jpg</normaloff>
+         <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -965,8 +952,8 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-         <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+         <normaloff>UI_PIC/OFF.jpg</normaloff>
+         <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -1016,8 +1003,8 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-         <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+         <normaloff>UI_PIC/OFF.jpg</normaloff>
+         <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -1236,9 +1223,9 @@
       <widget class="QLabel" name="CH2_I_1">
        <property name="geometry">
         <rect>
-         <x>510</x>
+         <x>550</x>
          <y>100</y>
-         <width>71</width>
+         <width>31</width>
          <height>21</height>
         </rect>
        </property>
@@ -1251,10 +1238,10 @@
         </font>
        </property>
        <property name="text">
-        <string>Interval</string>
+        <string>ON</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="LE_CH2_I_1">
+      <widget class="QLineEdit" name="LE_CH2_ON_1">
        <property name="geometry">
         <rect>
          <x>590</x>
@@ -1275,9 +1262,9 @@
       <widget class="QLabel" name="CH3_I_1">
        <property name="geometry">
         <rect>
-         <x>510</x>
+         <x>550</x>
          <y>150</y>
-         <width>71</width>
+         <width>31</width>
          <height>31</height>
         </rect>
        </property>
@@ -1290,10 +1277,10 @@
         </font>
        </property>
        <property name="text">
-        <string>Interval</string>
+        <string>ON</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="LE_CH3_I_1">
+      <widget class="QLineEdit" name="LE_CH3_ON_1">
        <property name="geometry">
         <rect>
          <x>590</x>
@@ -1335,9 +1322,9 @@
       <widget class="QLabel" name="CH1_I_1">
        <property name="geometry">
         <rect>
-         <x>510</x>
+         <x>550</x>
          <y>50</y>
-         <width>71</width>
+         <width>31</width>
          <height>21</height>
         </rect>
        </property>
@@ -1350,7 +1337,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Interval</string>
+        <string>ON</string>
        </property>
       </widget>
       <widget class="QLabel" name="CH3_S_1">
@@ -1374,7 +1361,7 @@
         <string>ms</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="LE_CH1_I_1">
+      <widget class="QLineEdit" name="LE_CH1_ON_1">
        <property name="geometry">
         <rect>
          <x>590</x>
@@ -1399,6 +1386,195 @@
          <y>50</y>
          <width>31</width>
          <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <italic>false</italic>
+         <bold>true</bold>
+         <underline>false</underline>
+        </font>
+       </property>
+       <property name="text">
+        <string>ms</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="LE_CH2_OFF_1">
+       <property name="geometry">
+        <rect>
+         <x>830</x>
+         <y>100</y>
+         <width>113</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+         <italic>true</italic>
+         <bold>true</bold>
+         <underline>false</underline>
+        </font>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="CH1_S_2">
+       <property name="geometry">
+        <rect>
+         <x>950</x>
+         <y>50</y>
+         <width>31</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <italic>false</italic>
+         <bold>true</bold>
+         <underline>false</underline>
+        </font>
+       </property>
+       <property name="text">
+        <string>ms</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="LE_CH3_OFF_1">
+       <property name="geometry">
+        <rect>
+         <x>830</x>
+         <y>150</y>
+         <width>113</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+         <italic>true</italic>
+         <bold>true</bold>
+         <underline>false</underline>
+        </font>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="CH2_S_2">
+       <property name="geometry">
+        <rect>
+         <x>950</x>
+         <y>100</y>
+         <width>31</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <italic>false</italic>
+         <bold>true</bold>
+         <underline>false</underline>
+        </font>
+       </property>
+       <property name="text">
+        <string>ms</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="CH1_I_3">
+       <property name="geometry">
+        <rect>
+         <x>780</x>
+         <y>60</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <italic>false</italic>
+         <bold>true</bold>
+         <underline>false</underline>
+        </font>
+       </property>
+       <property name="text">
+        <string>OFF</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="CH2_I_3">
+       <property name="geometry">
+        <rect>
+         <x>780</x>
+         <y>110</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <italic>false</italic>
+         <bold>true</bold>
+         <underline>false</underline>
+        </font>
+       </property>
+       <property name="text">
+        <string>OFF</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="CH3_I_3">
+       <property name="geometry">
+        <rect>
+         <x>780</x>
+         <y>150</y>
+         <width>41</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <italic>false</italic>
+         <bold>true</bold>
+         <underline>false</underline>
+        </font>
+       </property>
+       <property name="text">
+        <string>OFF</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="LE_CH1_OFF_1">
+       <property name="geometry">
+        <rect>
+         <x>830</x>
+         <y>50</y>
+         <width>111</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+         <italic>true</italic>
+         <bold>true</bold>
+         <underline>false</underline>
+        </font>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="CH3_S_2">
+       <property name="geometry">
+        <rect>
+         <x>950</x>
+         <y>150</y>
+         <width>31</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="font">
@@ -1448,8 +1624,8 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-         <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+         <normaloff>UI_PIC/OFF.jpg</normaloff>
+         <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -1520,8 +1696,8 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-         <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+         <normaloff>UI_PIC/OFF.jpg</normaloff>
+         <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -1633,8 +1809,8 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-         <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+         <normaloff>UI_PIC/OFF.jpg</normaloff>
+         <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -1705,8 +1881,8 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>UI_PIC/OFF_Plus.png.jpg</normaloff>
-         <normalon>UI_PIC/ON_Plus.png.jpg</normalon>UI_PIC/OFF_Plus.png.jpg</iconset>
+         <normaloff>UI_PIC/OFF.jpg</normaloff>
+         <normalon>UI_PIC/ON.jpg</normalon>UI_PIC/OFF.jpg</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -1763,6 +1939,19 @@
         <string>次</string>
        </property>
       </widget>
+     </widget>
+     <widget class="QPushButton" name="PB_Exit">
+      <property name="geometry">
+       <rect>
+        <x>1040</x>
+        <y>0</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>退出测试模式</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="page2">
@@ -2239,7 +2428,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>966</width>
+     <width>1120</width>
      <height>21</height>
     </rect>
    </property>
